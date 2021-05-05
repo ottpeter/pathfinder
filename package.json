@@ -16,6 +16,7 @@
     "boxen": "^5.0.1",
     "chalk": "^4.1.1",
     "ethereumjs-util": "^7.0.10",
-    "hdkey": "^2.0.1"
+    "hdkey": "^2.0.1",
+    "js-levenshtein": "^1.1.6"
   }
 }
