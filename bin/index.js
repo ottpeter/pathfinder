@@ -11,6 +11,8 @@ var ethUtils = require('ethereumjs-util');            // Convert to address tool
 const greeting = chalk.white.bold("Start!");
 const msgBox = boxen( greeting, { padding: 1, margin: 1, borderStyle: "round", borderColor: "green", backgroundColor: "#555555"} );
 console.log(msgBox);
+const success = chalk.green.bold("SUCCESS!");
+const sucBox = boxen( success, { padding: 1, margin: 1, borderStyle: "round", borderColor: "green", backgroundColor: "#220022"} );
 
 // MAX values
 const MAX_PURPOSE = 44;
@@ -40,7 +42,6 @@ hdkey = HDKey.fromMasterSeed(Buffer.from(seed, 'hex'));             // Generate 
 for (let purpose = 44; purpose <= MAX_PURPOSE; purpose++ ) {
   for (let coinType = 60; coinType <= MAX_COINTYPE; coinType++) {
     for (let account = 0; account <= MAX_ACCOUNT; account++) {
-      
       for (let change = 0; change <= MAX_CHANGE; change++) {
         for (let index = 0; index <= MAX_INDEX; index++) {
           runVariations(purpose, coinType, account, change, index);
@@ -51,9 +52,8 @@ for (let purpose = 44; purpose <= MAX_PURPOSE; purpose++ ) {
 }
 
 
-
 function runVariations(purpose, coinType, account, change, index) {
-  // Végigírom őket kézzel mert nincs kedvem gondolkodni...
+  // All the tick variations
   path = "m/" + purpose + "/" + coinType + "/" + account + "/" + change + "/" + index;
   deriveAddress(path);
   path = "m/" + purpose + "/" + coinType + "/" + account + "/" + change + "'/" + index;
@@ -88,32 +88,22 @@ function runVariations(purpose, coinType, account, change, index) {
   deriveAddress(path);
 
 
-  // 1. tick
-  // 2. null
-
-  //NULL
+  // value could be null (path can be shorter)
 }
 
 
 function deriveAddress(path) {
   childkey = hdkey.derive(path);
-  //console.log("childkey: ", childkey);
   address = ethUtils.publicToAddress(childkey.publicKey, true);
   let currentAddr = ethUtils.bufferToHex(address);
 
   console.log("path: ", path);
-  console.log(currentAddr);
-  console.log(lookingForAddr);
-  console.log("? ", currentAddr == lookingForAddr)
-  if (currentAddr.includes(lookingForAddr) || ethUtils.toChecksumAddress(currentAddr).includes(lookingForAddr))
-    fs.writeFileSync( "output.txt", "Found! " + path)
   console.log("Generated address: ", currentAddr);
   
+  if (currentAddr.includes(lookingForAddr) || ethUtils.toChecksumAddress(currentAddr).includes(lookingForAddr)) {
+    fs.writeFileSync( "output.txt", "Found! " + path)
+    console.log(sucBox);
+    console.log("Path: ", path);
+    process.exit();
+  } 
 }
-
-
-
-
-//console.log("Checksum address: ", ethUtils.toChecksumAddress(ethUtils.bufferToHex(address)))
-
-
