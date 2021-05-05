@@ -9,6 +9,13 @@
   "author": "",
   "license": "ISC",
   "bin": {
-   "hello": "./bin/index.js"
- }
+    "hello": "./bin/index.js"
+  },
+  "dependencies": {
+    "bip39": "^3.0.4",
+    "boxen": "^5.0.1",
+    "chalk": "^4.1.1",
+    "ethereumjs-util": "^7.0.10",
+    "hdkey": "^2.0.1"
+  }
 }
