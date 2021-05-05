@@ -16,16 +16,25 @@ const sucBox = boxen( success, { padding: 1, margin: 1, borderStyle: "round", bo
 
 // MAX values
 const MAX_PURPOSE = 44;
-const MAX_COINTYPE = 60;
-const MAX_ACCOUNT = 100;
+const MAX_COINTYPE = 100;
+const MAX_ACCOUNT = 0;
 const MAX_CHANGE = 100;
 const MAX_INDEX = 10;
 
+// START values
+const START_PURPOSE = 44;
+const START_COINTYPE = 0;
+const START_ACCOUNT = 0;
+const START_CHANGE = 0;
+const START_INDEX = 0;
+
+const FAV = [2,4,8,16,32,64,128,256,512,9,11,20,29,38,110];
+
 
 // The credentials
-let mnemonic = "pact blast security evolve faculty rural wheat ladder gun thrive garment urban";
-let password = "";
-let lookingForAddr = "0xeEfA4bdb8d82c328562E501c82468Bf48B9E8d3c";
+let mnemonic = "beach ceiling square fiscal success ghost lady gossip betray ostrich canal average sting blind exchange assault since they wet hen spin age mechanic coil";
+let password = "Oxy63Lufiyogasii613";
+let lookingForAddr = "0x05ff2FA8D64F55627b9B0F8911Ff8d80c481C973";
 let seed = null;
 let hdkey = null;
 let childkey = null;
@@ -37,19 +46,32 @@ seed = bip39.mnemonicToSeedSync(mnemonic, password);                // Convert m
 //console.log("bip39: ", seed);
 hdkey = HDKey.fromMasterSeed(Buffer.from(seed, 'hex'));             // Generate master key from seed
 
+/** 5 for cycles FAV */
+for (let purpose = 0; purpose < FAV.length; purpose++ ) {
+  for (let coinType = 0; coinType < FAV.length; coinType++) {
+    for (let account = 0; account < FAV.length; account++) {
+      for (let change = 0; change < FAV.length; change++) {
+        for (let index = 0; index <= 25; index++) {
+          runVariations(FAV[purpose], FAV[coinType], FAV[account], FAV[change], index);
+        }
+      }
+    }
+  }
+}
 
 /** 5 for cycles all together */
-for (let purpose = 44; purpose <= MAX_PURPOSE; purpose++ ) {
-  for (let coinType = 60; coinType <= MAX_COINTYPE; coinType++) {
-    for (let account = 0; account <= MAX_ACCOUNT; account++) {
-      for (let change = 0; change <= MAX_CHANGE; change++) {
-        for (let index = 0; index <= MAX_INDEX; index++) {
+for (let purpose = START_PURPOSE; purpose <= MAX_PURPOSE; purpose++ ) {
+  for (let coinType = START_COINTYPE; coinType <= MAX_COINTYPE; coinType++) {
+    for (let account = START_ACCOUNT; account <= MAX_ACCOUNT; account++) {
+      for (let change = START_CHANGE; change <= MAX_CHANGE; change++) {
+        for (let index = START_INDEX; index <= MAX_INDEX; index++) {
           runVariations(purpose, coinType, account, change, index);
         }
       }
     }
   }
 }
+
 
 
 function runVariations(purpose, coinType, account, change, index) {
