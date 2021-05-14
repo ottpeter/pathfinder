@@ -15,4 +15,4 @@ for (let purpose = 0; purpose <= 256; purpose++) {
 
 console.log("Matrix: ", matrix);
 
-writeFileSync('array.json', JSON.stringify({matrix: matrix}));
+fs.writeFileSync('array.json', JSON.stringify({matrix: matrix}));

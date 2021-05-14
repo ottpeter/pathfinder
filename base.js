@@ -1,12 +1,17 @@
 /**  Needs editing*/
-const fs = require('fs');
 const path = require('path');
 const dayjs = require('dayjs');
 const duration = require('dayjs/plugin/duration');
 const { Executor, Task, utils, vm } = require('yajsapi');
 const { program } = require('commander');
+const chalk = require("chalk");
+const boxen = require("boxen");
+const fs = require('fs');
 
-const matrix = fs.readFileSync('array.json');
+// This is just message styling...
+const greeting = chalk.white.bold("Start!"); const startMessage = boxen( greeting, { padding: 1, margin: 1, borderStyle: "round", borderColor: "green", backgroundColor: "#555555"} );
+const success = chalk.green.bold("SUCCESS!"); const successMessage = boxen( success, { padding: 1, margin: 1, borderStyle: "round", borderColor: "green", backgroundColor: "#220022"} );
+const matrix = JSON.parse(fs.readFileSync('array.json')).matrix;
 
 dayjs.extend(duration);
 
@@ -21,33 +26,30 @@ async function main(subnetTag, driver, network) {
 
   async function* worker(ctx, tasks) {
     for await (let task of tasks) {
-      let frame = task.data();
+      let index = task.data();
       
       ctx.send_json("/golem/input/input.json", {
-        firstTwo: matrix[frame],
+        firstTwo: matrix[index],
       });
       
-      ctx.run("/golem/work/hello.js");
+      ctx.run("/golem/work/finder.js");
 
       ctx.download_file(
         `/golem/output/result.json`,
-        path.join(__dirname, `./output_${frame[0]}_${frame[1]}.json`)
+        path.join(__dirname, `./output_${index[0]}_${index[1]}.json`)
       );
       let resultObj = JSON.parse(fs.readFileSync('./output_${frame[0]}_${frame[1]}.json'));
-      // Analyze return value (if result.json is created, then it was a successful run)
-        // Success WE FOUND IT, exit
-        // Success: remove from matrix (that does not mean that we found what we want)
-        // Failure: don't remove from matrix (probably download_file wouldn't run at all)
       if (resultObj.Success === true) {
-        // save
-        // print
-        // exit
+        fs.writeFileSync( "SUCCESS.txt", "Found! " + resultObj.path);
+        console.log(successMessage);
+        console.log("Path: ", path);
+        return;
       }
       if (resultObj.scriptRun === true) {
-        //remove
-        // rewrite array.json
+        matrix.splice(index, 1);
+        fs.writeFileSync('array.json', JSON.stringify({matrix: matrix}));
       } else {
-        // Do nothing
+        console.log("This run was not successful, but mos likely this else-branch won't run. ");
       }
       yield ctx.commit({timeout: dayjs.duration({ seconds: 120 }).asMilliseconds()});
       task.accept_result("output_file");
@@ -57,8 +59,8 @@ async function main(subnetTag, driver, network) {
     return;
   }
 
-  const frames = range(0, matrix.length, 1);
-  const timeout = dayjs.duration({ minutes: 15 }).asMilliseconds();
+  const options = range(0, matrix.length, 1);
+  const timeout = dayjs.duration({ minutes: 360 }).asMilliseconds();
 
   await asyncWith(
     new Executor({
@@ -74,7 +76,7 @@ async function main(subnetTag, driver, network) {
     async (executor) => {
       for await (let task of executor.submit(
         worker,
-        frames.map((frame) => new Task(frame))
+        options.map((option) => new Task(option))
       )) {
         console.log("result=", task.result());
       }
