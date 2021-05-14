@@ -20,8 +20,8 @@ const { asyncWith, logUtils, range } = utils;
 async function main(subnetTag, driver, network) {
   const _package = await vm.repo({
     image_hash: "",
-    min_mem_gib: 0.5,
-    min_storage_gib: 2,
+    min_mem_gib: 0.3,
+    min_storage_gib: 0.5,
   });
 
   async function* worker(ctx, tasks) {
@@ -31,7 +31,7 @@ async function main(subnetTag, driver, network) {
       ctx.send_json("/golem/input/input.json", {
         firstTwo: matrix[index],
         mnemonic: "fresh outdoor blue asthma trigger digital come language alarm style purpose giant hello ghost jar person zero select canvas mercy reveal prison boss finish",
-        password: "BadPassword",
+        password: "PasswordMayOrMayNotBeUsed",
         addr: "0x11d7F8337C03459101D38DE3B4ABaBFE692Cf711"
       });
       
@@ -59,7 +59,7 @@ async function main(subnetTag, driver, network) {
       }
     }
 
-    ctx.log("no more frames to render");
+    ctx.log("end");
     return;
   }
 
