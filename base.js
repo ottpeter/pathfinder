@@ -11,7 +11,7 @@ const fs = require('fs');
 // This is just message styling...
 const greeting = chalk.white.bold("Start!"); const startMessage = boxen( greeting, { padding: 1, margin: 1, borderStyle: "round", borderColor: "green", backgroundColor: "#555555"} );
 const success = chalk.green.bold("SUCCESS!"); const successMessage = boxen( success, { padding: 1, margin: 1, borderStyle: "round", borderColor: "green", backgroundColor: "#220022"} );
-const matrix = JSON.parse(fs.readFileSync('array.json')).matrix;
+const matrix = JSON.parse(fs.readFileSync('./ethfinder/array.json')).matrix;
 
 dayjs.extend(duration);
 
@@ -39,31 +39,32 @@ async function main(subnetTag, driver, network) {
 
       ctx.download_file(
         `/golem/output/result.json`,
-        path.join(__dirname, `./output_${index[0]}_${index[1]}.json`)
+        path.join(__dirname, `./output_${matrix[index][0]}_${matrix[index][1]}.json`)
       );
-      let resultObj = JSON.parse(fs.readFileSync('./output_${frame[0]}_${frame[1]}.json'));
+      yield ctx.commit({timeout: dayjs.duration({ seconds: 120 }).asMilliseconds()});
+      let resultObj = JSON.parse(fs.readFileSync(path.join(__dirname, `./output_${matrix[index][0]}_${matrix[index][1]}.json`)));
       if (resultObj.Success === true) {
         fs.writeFileSync( "SUCCESS.txt", "Found! " + resultObj.path);
         console.log(successMessage);
-        console.log("Path: ", path);
+        console.log("Path: ", resultObj.path);
         return;
       }
       if (resultObj.scriptRun === true) {
         matrix.splice(index, 1);
-        fs.writeFileSync('array.json', JSON.stringify({matrix: matrix}));
+        fs.writeFileSync('./ethfinder/array.json', JSON.stringify({matrix: matrix}));
+        task.accept_result(`./output_${matrix[index][0]}_${matrix[index][1]}.json`);
       } else {
         console.log("This run was not successful, but mos likely this else-branch won't run. ");
+        task.reject_task("This run was not successul");
       }
-      yield ctx.commit({timeout: dayjs.duration({ seconds: 120 }).asMilliseconds()});
-      task.accept_result("output_file");
     }
 
     ctx.log("no more frames to render");
     return;
   }
 
-  const options = range(0, matrix.length, 1);
-  const timeout = dayjs.duration({ minutes: 360 }).asMilliseconds();
+  const variations = range(0, matrix.length, 1);
+  const timeout = dayjs.duration({ minutes: 15 }).asMilliseconds();
 
   await asyncWith(
     new Executor({
@@ -79,7 +80,7 @@ async function main(subnetTag, driver, network) {
     async (executor) => {
       for await (let task of executor.submit(
         worker,
-        options.map((option) => new Task(option))
+        variations.map((variant) => new Task(variant))
       )) {
         console.log("result=", task.result());
       }
