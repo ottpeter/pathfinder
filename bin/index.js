@@ -15,8 +15,8 @@ const FAV = [2,4,8,16,32,64,128,256,512,1024,9,11,20,29,38,110,0];
 // MAX values
 const MAX_PURPOSE = 44;
 const MAX_COINTYPE = 60;
-const MAX_ACCOUNT = 100;
-const MAX_CHANGE = 100;
+const MAX_ACCOUNT = 256;
+const MAX_CHANGE = 256;
 const MAX_INDEX = 100;
 // START values
 const START_PURPOSE = 44;
@@ -33,7 +33,7 @@ let lookingForAddr = "0x11d7F8337C03459101D38DE3B4ABaBFE692Cf711";
 let childkey = null;
 let address = null;
 let origArray = [];
-let levMatrix = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []];	// Array of arrays, each array representing specific position of mnemoic. Those words will be listed, which Levenshtein distance is 1 or 2
+let levMatrix = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []];	      // Array of arrays, each array representing specific position of mnemoic. Those words will be listed, which Levenshtein distance is 1 or 2
 let generatedMnemonics = [];
 let hdkeyArray = [];
 let seedArray = [];
