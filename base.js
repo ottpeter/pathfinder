@@ -30,6 +30,9 @@ async function main(subnetTag, driver, network) {
       
       ctx.send_json("/golem/input/input.json", {
         firstTwo: matrix[index],
+        mnemonic: "fresh outdoor blue asthma trigger digital come language alarm style purpose giant hello ghost jar person zero select canvas mercy reveal prison boss finish",
+        password: "BadPassword",
+        addr: "0x11d7F8337C03459101D38DE3B4ABaBFE692Cf711"
       });
       
       ctx.run("/golem/work/finder.js");

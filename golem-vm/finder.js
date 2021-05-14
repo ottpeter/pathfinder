@@ -26,8 +26,8 @@ const params = JSON.parse(raw);
 
 /** Settings */
 // Wallet data
-let purpose = params.purpose;
-let coinType = params.coinType;
+let purpose = params.firstTwo[0];
+let coinType = params.firstTwo[1];
 let mnemonic = params.mnemonic;
 let password = params.password;
 let lookingForAddr = params.addr;
