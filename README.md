@@ -1,5 +1,5 @@
 This is a HD path finder that is using Golem network.
-First download [yajsapi](https://github.com/golemfactory/yajsapi) and instert the files into the examples folder.
+First download [yajsapi](https://github.com/golemfactory/yajsapi) and insert the files into the examples folder.
 I edited the package.json, I added this line:  
 `"js:ethfinder": "node ./ethfinder/base.js",` to scripts.
 
